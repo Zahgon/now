@@ -1,136 +1,154 @@
 ## Now
 
-Now is a time toolkit for golang
-
-[![go report card](https://goreportcard.com/badge/github.com/jinzhu/now "go report card")](https://goreportcard.com/report/github.com/jinzhu/now)
-[![test status](https://github.com/jinzhu/now/workflows/tests/badge.svg?branch=master "test status")](https://github.com/jinzhu/now/actions)
-[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+Now is a time toolkit for Java — a port of [jinzhu/now](https://github.com/jinzhu/now).
 
 ## Install
 
+```xml
+<dependency>
+  <groupId>com.github.jinzhu</groupId>
+  <artifactId>now</artifactId>
+  <version>1.0-SNAPSHOT</version>
+</dependency>
 ```
-go get -u github.com/jinzhu/now
-```
+
+Requires Java 17 or later.
 
 ## Usage
 
 Calculating time based on current time
 
-```go
-import "github.com/jinzhu/now"
+```java
+import com.github.jinzhu.now.*;
 
-time.Now() // 2013-11-18 17:51:49.123456789 Mon
+GoTime.now(); // 2013-11-18 17:51:49.123456789 Mon
 
-now.BeginningOfMinute()        // 2013-11-18 17:51:00 Mon
-now.BeginningOfHour()          // 2013-11-18 17:00:00 Mon
-now.BeginningOfDay()           // 2013-11-18 00:00:00 Mon
-now.BeginningOfWeek()          // 2013-11-17 00:00:00 Sun
-now.BeginningOfMonth()         // 2013-11-01 00:00:00 Fri
-now.BeginningOfQuarter()       // 2013-10-01 00:00:00 Tue
-now.BeginningOfYear()          // 2013-01-01 00:00:00 Tue
+Nows.beginningOfMinute();          // 2013-11-18 17:51:00 Mon
+Nows.beginningOfHour();            // 2013-11-18 17:00:00 Mon
+Nows.beginningOfDay();             // 2013-11-18 00:00:00 Mon
+Nows.beginningOfWeek();            // 2013-11-17 00:00:00 Sun
+Nows.beginningOfMonth();           // 2013-11-01 00:00:00 Fri
+Nows.beginningOfQuarter();         // 2013-10-01 00:00:00 Tue
+Nows.beginningOfYear();            // 2013-01-01 00:00:00 Tue
 
-now.EndOfMinute()              // 2013-11-18 17:51:59.999999999 Mon
-now.EndOfHour()                // 2013-11-18 17:59:59.999999999 Mon
-now.EndOfDay()                 // 2013-11-18 23:59:59.999999999 Mon
-now.EndOfWeek()                // 2013-11-23 23:59:59.999999999 Sat
-now.EndOfMonth()               // 2013-11-30 23:59:59.999999999 Sat
-now.EndOfQuarter()             // 2013-12-31 23:59:59.999999999 Tue
-now.EndOfYear()                // 2013-12-31 23:59:59.999999999 Tue
+Nows.endOfMinute();                // 2013-11-18 17:51:59.999999999 Mon
+Nows.endOfHour();                  // 2013-11-18 17:59:59.999999999 Mon
+Nows.endOfDay();                   // 2013-11-18 23:59:59.999999999 Mon
+Nows.endOfWeek();                  // 2013-11-23 23:59:59.999999999 Sat
+Nows.endOfMonth();                 // 2013-11-30 23:59:59.999999999 Sat
+Nows.endOfQuarter();               // 2013-12-31 23:59:59.999999999 Tue
+Nows.endOfYear();                  // 2013-12-31 23:59:59.999999999 Tue
 
-now.WeekStartDay = time.Monday // Set Monday as first day, default is Sunday
-now.EndOfWeek()                // 2013-11-24 23:59:59.999999999 Sun
+Nows.weekStartDay = Weekday.MONDAY; // Set Monday as first day, default is Sunday
+Nows.endOfWeek();                   // 2013-11-24 23:59:59.999999999 Sun
 ```
 
 Calculating time based on another time
 
-```go
-t := time.Date(2013, 02, 18, 17, 51, 49, 123456789, time.Now().Location())
-now.With(t).EndOfMonth()   // 2013-02-28 23:59:59.999999999 Thu
+```java
+GoTime t = GoTime.date(2013, 2, 18, 17, 51, 49, 123456789, Location.local());
+Nows.with(t).endOfMonth();  // 2013-02-28 23:59:59.999999999 Thu
 ```
 
 Calculating time based on configuration
 
-```go
-location, err := time.LoadLocation("Asia/Shanghai")
+```java
+Location location = Location.load("Asia/Shanghai");
 
-myConfig := &now.Config{
-	WeekStartDay: time.Monday,
-	TimeLocation: location,
-	TimeFormats: []string{"2006-01-02 15:04:05"},
-}
+Config myConfig = new Config(
+        Weekday.MONDAY,
+        location,
+        List.of("2006-01-02 15:04:05"));
 
-t := time.Date(2013, 11, 18, 17, 51, 49, 123456789, time.Now().Location()) // // 2013-11-18 17:51:49.123456789 Mon
-myConfig.With(t).BeginningOfWeek()         // 2013-11-18 00:00:00 Mon
+GoTime t = GoTime.date(2013, 11, 18, 17, 51, 49, 123456789, Location.local()); // 2013-11-18 17:51:49.123456789 Mon
+myConfig.with(t).beginningOfWeek();        // 2013-11-18 00:00:00 Mon
 
-myConfig.Parse("2002-10-12 22:14:01")     // 2002-10-12 22:14:01
-myConfig.Parse("2002-10-12 22:14")        // returns error 'can't parse string as time: 2002-10-12 22:14'
+myConfig.parse("2002-10-12 22:14:01");     // 2002-10-12 22:14:01
+myConfig.parse("2002-10-12 22:14");        // throws TimeParseException "Can't parse string as time: 2002-10-12 22:14"
 ```
 
 ### Monday/Sunday
 
-Don't be bothered with the `WeekStartDay` setting, you can use `Monday`, `Sunday`
+Don't be bothered with the `weekStartDay` setting, you can use `monday`, `sunday`
 
-```go
-now.Monday()              // 2013-11-18 00:00:00 Mon
-now.Monday("17:44")       // 2013-11-18 17:44:00 Mon
-now.Sunday()              // 2013-11-24 00:00:00 Sun (Next Sunday)
-now.Sunday("18:19:24")    // 2013-11-24 18:19:24 Sun (Next Sunday)
-now.EndOfSunday()         // 2013-11-24 23:59:59.999999999 Sun (End of next Sunday)
+```java
+Nows.monday();              // 2013-11-18 00:00:00 Mon
+Nows.monday("17:44");       // 2013-11-18 17:44:00 Mon
+Nows.sunday();              // 2013-11-24 00:00:00 Sun (Next Sunday)
+Nows.sunday("18:19:24");    // 2013-11-24 18:19:24 Sun (Next Sunday)
+Nows.endOfSunday();         // 2013-11-24 23:59:59.999999999 Sun (End of next Sunday)
 
-t := time.Date(2013, 11, 24, 17, 51, 49, 123456789, time.Now().Location()) // 2013-11-24 17:51:49.123456789 Sun
-now.With(t).Monday()              // 2013-11-18 00:00:00 Mon (Last Monday if today is Sunday)
-now.With(t).Monday("17:44")       // 2013-11-18 17:44:00 Mon (Last Monday if today is Sunday)
-now.With(t).Sunday()              // 2013-11-24 00:00:00 Sun (Beginning Of Today if today is Sunday)
-now.With(t).Sunday("18:19:24")    // 2013-11-24 18:19:24 Sun (Beginning Of Today if today is Sunday)
-now.With(t).EndOfSunday()         // 2013-11-24 23:59:59.999999999 Sun (End of Today if today is Sunday)
+GoTime t = GoTime.date(2013, 11, 24, 17, 51, 49, 123456789, Location.local()); // 2013-11-24 17:51:49.123456789 Sun
+Nows.with(t).monday();              // 2013-11-18 00:00:00 Mon (Last Monday if today is Sunday)
+Nows.with(t).monday("17:44");       // 2013-11-18 17:44:00 Mon (Last Monday if today is Sunday)
+Nows.with(t).sunday();              // 2013-11-24 00:00:00 Sun (Beginning Of Today if today is Sunday)
+Nows.with(t).sunday("18:19:24");    // 2013-11-24 18:19:24 Sun (Beginning Of Today if today is Sunday)
+Nows.with(t).endOfSunday();         // 2013-11-24 23:59:59.999999999 Sun (End of Today if today is Sunday)
 ```
 
 ### Parse String to Time
 
-```go
-time.Now() // 2013-11-18 17:51:49.123456789 Mon
+```java
+GoTime.now(); // 2013-11-18 17:51:49.123456789 Mon
 
-// Parse(string) (time.Time, error)
-t, err := now.Parse("2017")                // 2017-01-01 00:00:00, nil
-t, err := now.Parse("2017-10")             // 2017-10-01 00:00:00, nil
-t, err := now.Parse("2017-10-13")          // 2017-10-13 00:00:00, nil
-t, err := now.Parse("1999-12-12 12")       // 1999-12-12 12:00:00, nil
-t, err := now.Parse("1999-12-12 12:20")    // 1999-12-12 12:20:00, nil
-t, err := now.Parse("1999-12-12 12:20:21") // 1999-12-12 12:20:21, nil
-t, err := now.Parse("10-13")               // 2013-10-13 00:00:00, nil
-t, err := now.Parse("12:20")               // 2013-11-18 12:20:00, nil
-t, err := now.Parse("12:20:13")            // 2013-11-18 12:20:13, nil
-t, err := now.Parse("14")                  // 2013-11-18 14:00:00, nil
-t, err := now.Parse("99:99")               // 2013-11-18 12:20:00, Can't parse string as time: 99:99
+// GoTime parse(String...) throws TimeParseException
+GoTime t = Nows.parse("2017");                // 2017-01-01 00:00:00
+GoTime t = Nows.parse("2017-10");             // 2017-10-01 00:00:00
+GoTime t = Nows.parse("2017-10-13");          // 2017-10-13 00:00:00
+GoTime t = Nows.parse("1999-12-12 12");       // 1999-12-12 12:00:00
+GoTime t = Nows.parse("1999-12-12 12:20");    // 1999-12-12 12:20:00
+GoTime t = Nows.parse("1999-12-12 12:20:21"); // 1999-12-12 12:20:21
+GoTime t = Nows.parse("10-13");               // 2013-10-13 00:00:00
+GoTime t = Nows.parse("12:20");               // 2013-11-18 12:20:00
+GoTime t = Nows.parse("12:20:13");            // 2013-11-18 12:20:13
+GoTime t = Nows.parse("14");                  // 2013-11-18 14:00:00
+GoTime t = Nows.parse("99:99");               // throws TimeParseException "Can't parse string as time: 99:99"
 
-// MustParse must parse string to time or it will panic
-now.MustParse("2013-01-13")             // 2013-01-13 00:00:00
-now.MustParse("02-17")                  // 2013-02-17 00:00:00
-now.MustParse("2-17")                   // 2013-02-17 00:00:00
-now.MustParse("8")                      // 2013-11-18 08:00:00
-now.MustParse("2002-10-12 22:14")       // 2002-10-12 22:14:00
-now.MustParse("99:99")                  // panic: Can't parse string as time: 99:99
+// mustParse must parse the string to a time or it throws DateTimeException
+Nows.mustParse("2013-01-13");             // 2013-01-13 00:00:00
+Nows.mustParse("02-17");                  // 2013-02-17 00:00:00
+Nows.mustParse("2-17");                   // 2013-02-17 00:00:00
+Nows.mustParse("8");                      // 2013-11-18 08:00:00
+Nows.mustParse("2002-10-12 22:14");       // 2002-10-12 22:14:00
+Nows.mustParse("99:99");                  // throws DateTimeException: Can't parse string as time: 99:99
 ```
 
-Extend `now` to support more formats is quite easy, just update `now.TimeFormats` with other time layouts, e.g:
+Extending `now` to support more formats is quite easy, just add other time layouts to `Nows.timeFormats`, e.g:
 
-```go
-now.TimeFormats = append(now.TimeFormats, "02 Jan 2006 15:04")
+```java
+Nows.timeFormats.add("02 Jan 2006 15:04");
 ```
 
-Please send me pull requests if you want a format to be supported officially
+## Notes on the port
 
-## Contributing
+The Java API mirrors the Go one, with a few adjustments the language forces:
 
-You can help to make the project better, check out [http://gorm.io/contribute.html](http://gorm.io/contribute.html) for things you can do.
+- **`Nows` holds the package-level functions.** Go has both a `now.Now` struct and package-level
+  functions with the same names, e.g. `now.BeginningOfDay()` next to `(*Now).BeginningOfDay()`.
+  Java cannot put a static and an instance method of the same signature on one class, so the
+  struct methods live on `Now` and the package-level functions live on `Nows`.
 
-# Author
+- **Layouts stay Go reference layouts.** `timeFormats` still takes strings like
+  `"2006-01-02 15:04:05"`, not `DateTimeFormatter` patterns, so existing format lists carry over
+  unchanged. Go's layout scanner, formatter and parser are ported in `GoLayout`.
 
-**jinzhu**
+- **`GoTime` rather than `ZonedDateTime`.** `ZonedDateTime` cannot carry the anonymous zones
+  Go's parser fabricates (`Parse("23:28:9 Dec 19, 2013 PST")` keeps a zone literally named
+  `PST`), and it resolves daylight-saving gaps and overlaps by different rules than Go. Both
+  behaviours are observable through this library, so `time.Time` is ported as `GoTime`.
+  `GoTime.toZonedDateTime()` and `GoTime.toInstant()` hand back standard types.
 
-* <http://github.com/jinzhu>
-* <wosmvp@gmail.com>
-* <http://twitter.com/zhangjinzhu>
+- **`Weekday` counts Sunday as 0**, like Go, not Monday as 1 like `java.time.DayOfWeek`. The
+  week arithmetic depends on it. `Weekday.from(DayOfWeek)` and `Weekday.toDayOfWeek()` convert.
+
+- **`parse` throws a checked `TimeParseException`**, matching Go's returned `error`, while
+  `mustParse` throws an unchecked `DateTimeException`, matching Go's panic.
+
+## Build
+
+```
+mvn test
+```
 
 ## License
 
